@@ -7,15 +7,15 @@ Simple application to discover MusicCast devices in local network, check what is
 to Last.FM. Before scrobble application tries to lookup song in Last.FM database for validation 
 reasons. If it's successful song will be scrobbled.
 
-Support NP-S303, CRX-* (CRX-N470D, etc.) and WX-* (WX-030, etc.) devices and following inputs:
+Supports NP-S303, CRX-* (CRX-N470D, etc.) and WX-* (WX-030, etc.) devices and following inputs:
 
 - CD (only when cd-text available)
 - Spotify
 - Net radio
 - Net server (DLNA)
 
-This is (obviously) a fork of arekk/yamaha_musiccast_scrobbler
-The changes I made are:
+This is (obviously) a fork of [arekk/yamaha_musiccast_scrobbler](https://github.com/arekk/yamaha_musiccast_scrobbler). The changes I made are:
+
 - now using the last.fm.api (https://github.com/leemm/last.fm.api) which is a wrapper for Last.FM API v2 (Scrobbling 2.0, https://www.last.fm/api/scrobbling)
 - using "Now Playing" and only scrobbling after half of the track's duration or 4 min, whichever comes first
 - added Yamaha NP-S303 (a nice network player I own)
@@ -24,13 +24,14 @@ The changes I made are:
 
 ## Install
 You must have node.js installed: https://nodejs.org 
-I tested it on my local Linux box and on Synology NAS.
+I tested it on my local Linux box and on a Synology NAS.
 For the Synology NAS, there is a Node.js package available in the Package Center, I tested it with Node.js v12.
 
-Please note - application doesn't work properly under Windows.
+Please note – the application doesn't work properly under Windows.
 
 Before you start you need a Last.Fm api key and secret – get it here: https://www.last.fm/api/account/create
-Key and secret must be placed into file ``secret.json``:
+
+Key and secret must be placed into the file ``secret.json``, along with your last.fm username and password:
 
 ````
 {
@@ -42,7 +43,5 @@ Key and secret must be placed into file ``secret.json``:
 ````
 
 Next step is running ``npm install`` and if you immediately want to start it, e.g. on your Linux box, ``npm start``
-
-If you haven't granted access for application yet you'll be prompted to open URL first.
 
 For running (and automatically starting) this on a Synology NAS, see [ymc_scrobbler.conf](https://github.com/lineinthesand/yamaha_musiccast_scrobbler/blob/master/ymc_scrobbler.conf) for further directions.
