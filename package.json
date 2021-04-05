@@ -1,11 +1,12 @@
 {
-  "name": "yamaha_musiccast_scrobbler",
+  "name": "ymc_scrobbler",
   "version": "1.0.0",
-  "description": "Last.FM scrobbler for Yamaha MusicCast devices, ie. CRX-N470D",
+  "description": "Last.FM scrobbler for Yamaha MusicCast devices, eg. NP-S303",
   "main": "last.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodejs last.js"
+    "start": "node last.js",
+    "stop": "kill -- -$(ps -A | grep ymc_scrobbler | cut -d ' ' -f 1)"
   },
   "repository": {
     "type": "git",
@@ -20,13 +21,12 @@
   "author": "Arkadiusz Kurylowicz",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/arekk/yamaha_musiccast_scrobbler/issues"
+    "url": "https://github.com/lineinthesand/yamaha_musiccast_scrobbler/issues"
   },
-  "homepage": "https://github.com/arekk/yamaha_musiccast_scrobbler#readme",
+  "homepage": "https://github.com/lineinthesand/yamaha_musiccast_scrobbler#readme",
   "dependencies": {
-    "node-ssdp": "3.x.x",
+    "last.fm.api": ">=0.1.3",
     "lodash": "latest",
-    "crypto": "latest",
-    "lastfmapi": "0.1.1"
+    "node-ssdp": "3.x.x"
   }
 }
