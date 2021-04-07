@@ -48,3 +48,4 @@ For running (and automatically starting) this on a Synology NAS, see [ymc_scrobb
 
 ## Config
 The config.json file can be used to configure the log levels. To change the default log level from 2 (scrobbles & frequent device information), change "_loglevel" to "loglevel" and set it to 1 to only log scrobbles (no information about devices in network, which tends to spam the log even if you don't scrobble anything) or 0 to not even log the scrobbles.
+I'd recommend you turn the log level to something less than 2 once you have everything up and running in production to keep the logs less busy.
