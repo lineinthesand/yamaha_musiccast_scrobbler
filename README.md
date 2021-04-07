@@ -45,3 +45,6 @@ Key and secret must be placed into the file ``secret.json``, along with your las
 Next step is running ``npm install`` and if you immediately want to start it, e.g. on your Linux box, ``npm start``
 
 For running (and automatically starting) this on a Synology NAS, see [ymc_scrobbler.conf](https://github.com/lineinthesand/yamaha_musiccast_scrobbler/blob/master/ymc_scrobbler.conf) for further directions.
+
+## Config
+The config.json file can be used to configure the log levels. To change the default log level from 2 (scrobbles & frequent device information), change "_loglevel" to "loglevel" and set it to 1 to only log scrobbles (no information about devices in network, which tends to spam the log even if you don't scrobble anything) or 0 to not even log the scrobbles.

@@ -6,9 +6,22 @@ var crypto = require('crypto');
 const fs = require('fs');
 const API = require('last.fm.api');
 
+
 const updateInterval = 1000;
 const scrobbleAfter = 240000;
 const countBeforeScrobble = Math.trunc(scrobbleAfter/updateInterval);
+var logLevel = 2;
+
+function readConfig() {
+  fs.readFile('./config.json', 'utf8', 
+    function(err, content) {
+      if (!err) {
+        var config = JSON.parse(content);
+        if (typeof config.loglevel != "undefined") logLevel = config.loglevel;
+      }
+    }
+  );
+}
 
 var ssdpClient;
 var devices = [];
@@ -47,7 +60,7 @@ function authenticateLastFmUser(onSuccess) {
               fs.writeFile('./session.json', JSON.stringify(session), function () {
                   lastFMSession = session;
                   console.log("Saved session");
-                  console.log(lastFMSession);
+                  if (logLevel >= 3) console.log(lastFMSession);
                   onSuccess();
                 }
               );
@@ -59,7 +72,7 @@ function authenticateLastFmUser(onSuccess) {
       } else {
         lastFMSession = JSON.parse(session);
         console.log("Restored session");
-        console.log(lastFMSession);
+        if (logLevel >= 3) console.log(lastFMSession);
         onSuccess();
       }
     } // function
@@ -67,7 +80,9 @@ function authenticateLastFmUser(onSuccess) {
 }
 
 function sendScrobble(songInfoDict) {
-  console.log('Scrobbling ' + songInfoDict.artist + ' - ' + songInfoDict.track);
+  if (logLevel >= 1) { 
+    console.log('Scrobbling ' + songInfoDict.artist + ' - ' + songInfoDict.track);
+  }
   api.track.scrobble(songInfoDict);
 }
 
@@ -136,8 +151,10 @@ function getSong(ip, input, scrobbleSong) {
                     const timeBeforeScrobble = Math.min(halfSongDuration, scrobbleAfter);
                     const countBeforeScrobble = Math.trunc(timeBeforeScrobble/updateInterval);
 
-                    console.log('Got ', [_.get(song, 'artist.name'), _.get(song, 'album.title', ''), _.get(song, 'name')], 
-                                         ' - waiting ' + timeBeforeScrobble/1000 + ' s before scrobble');
+                    if (logLevel >= 2) { 
+                      console.log('Got ', [_.get(song, 'artist.name'), _.get(song, 'album.title', ''), _.get(song, 'name')], 
+                                           ' - waiting ' + timeBeforeScrobble/1000 + ' s before scrobble');
+                    }
 
                     const songInfoDict = {
                       'artist': song.artist.name,
@@ -162,7 +179,9 @@ function getSong(ip, input, scrobbleSong) {
 
                 var funcSongNotFound = 
                   function (err) {
-                    console.log('Not scrobbling:', err);
+                    if (logLevel >= 1) { 
+                      console.log('Not scrobbling:', err);
+                    }
                     _.set(currentSongs, [ip], {checksum: md5sum, count: 0, scrobbled: true, song: null});
                   }; // funcSongNotFound
 
@@ -249,12 +268,15 @@ function ssdpSearch() {
   ssdpClient.search('ssdp:all');
   setTimeout(function () {
     ssdpClient.stop();
-    console.log('Devices in network:', devices);
+    if (logLevel >= 2) { 
+      console.log('Devices in network:', devices);
+    }
   }, 2000);
 }
 
 process.title = 'ymc_scrobbler'
-console.log(process.title);
+
+readConfig(); 
 
 // loop SSDP device discovery every 1 minute
 initSsdpClient(function () {
@@ -265,7 +287,9 @@ initSsdpClient(function () {
 // expire device list every 15 minutes
 setInterval(
   function () {
-    console.log('Resetting devices list');
+    if (logLevel >= 2) { 
+      console.log('Resetting devices list');
+    }
     devices = [];
   }, 
   (1000 * 60 * 15)
