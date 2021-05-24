@@ -1,7 +1,6 @@
 var ssdp = require('node-ssdp').Client;
 var _ = require('lodash');
 var http = require('http');
-var crypto = require('crypto');
 
 const fs = require('fs');
 const API = require('last.fm.api');
@@ -141,9 +140,9 @@ function getSong(ip, input, scrobbleSong) {
               }
 
               var current = _.get(currentSongs, ip);
-              var md5sum = crypto.createHash('md5').update(artist + album + track).digest('hex');
+              var trackinfo = artist + album + track;
 
-              if (current == null || current.checksum != md5sum) {
+              if (current == null || current.trackinfocheck != trackinfo) {
                 var funcSongFound = 
                   // executed once when proper song information could be retrieved (by getProperSong)
                   function (song) { 
@@ -164,7 +163,7 @@ function getSong(ip, input, scrobbleSong) {
                     };
                     _.set(currentSongs, [ip], 
                       { 
-                        checksum: md5sum, 
+                        trackinfocheck: trackinfo, 
                         count: 0, 
                         scrobbled: false, 
                         song: song,
@@ -182,20 +181,20 @@ function getSong(ip, input, scrobbleSong) {
                     if (logLevel >= 1) { 
                       console.log('Not scrobbling:', err);
                     }
-                    _.set(currentSongs, [ip], {checksum: md5sum, count: 0, scrobbled: true, song: null});
+                    _.set(currentSongs, [ip], {trackinfocheck: trackinfo, count: 0, scrobbled: true, song: null});
                   }; // funcSongNotFound
 
                 getProperSong(input, artist, album, track, funcSongFound, funcSongNotFound);
               }
               // increase loop counter if song is still the same as before
-              if (current != null && current.checksum == md5sum) {
+              if (current != null && current.trackinfocheck == trackinfo) {
                 _.set(currentSongs, [ip, 'count'], (current.count + 1));
               }
               // check preconditions for the final scrobble
               if (   current != null 
                   && current.song != null
                   && current.scrobbled == false
-                  && current.checksum == md5sum 
+                  && current.trackinfocheck == trackinfo 
                   && current.count > current.countBeforeScrobble
                   )
               {
